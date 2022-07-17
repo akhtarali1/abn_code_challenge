@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+		http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.1.xsd">
+
+    <changeSet id="Create Ingredient Reference Table" author="AKhtar">
+        <createSequence cycle="true" incrementBy="1"
+                        sequenceName="INGREDIENT_REFERENCE_ID_SEQ" startValue="1"/>
+        <createTable tableName="INGREDIENT_REFERENCE">
+            <column name="ID" type="NUMBER(19)" defaultValueSequenceNext="INGREDIENT_REFERENCE_ID_SEQ">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="NAME" type="VARCHAR2(200)"/>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="create Food Recipe Table" author="Akhtar">
+        <createSequence cycle="true" incrementBy="1"
+                        sequenceName="FOOD_RECIPE_ID_SEQ" startValue="1"/>
+        <createTable tableName="FOOD_RECIPES">
+            <column name="ID" type="NUMBER(19)" defaultValueSequenceNext="FOOD_RECIPE_ID_SEQ">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="DISH_TYPE" type="VARCHAR2(200)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="SERVINGS" type="NUMBER(2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="INSTRUCTIONS" type="TEXT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <changeSet id="Create food recipe Ingredient Table" author="Akhtar">
+        <createSequence cycle="true" incrementBy="1"
+                        sequenceName="INGREDIENT_ID_SEQ" startValue="1"/>
+        <createTable tableName="INGREDIENT">
+            <column name="ID" type="NUMBER(19)" defaultValueSequenceNext="INGREDIENT_ID_SEQ">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="QUANTITY" type="NUMBER(4)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="UNIT" type="VARCHAR2(5)" />
+            <column name="REFERENCE_ID" type="NUMBER(19)">
+                <constraints foreignKeyName="FK_REFERENCE_ID" nullable="false"
+                             referencedColumnNames="ID" referencedTableName="INGREDIENT_REFERENCE"/>
+            </column>
+            <column name="FOOD_RECIPE_ID" type="NUMBER(19)">
+                <constraints foreignKeyName="FK_FOOD_RECIPE_ID" nullable="false"
+                             referencedColumnNames="ID" referencedTableName="FOOD_RECIPES"/>
+            </column>
+        </createTable>
+    </changeSet>
+</databaseChangeLog>
