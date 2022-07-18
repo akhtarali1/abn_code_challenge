@@ -22,13 +22,20 @@ import org.springframework.web.bind.annotation.RestController;
 import com.abn.food.recipe.model.FoodRecipe;
 import com.abn.food.recipe.service.FoodRecipeServiceImpl;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 /**
  * Food Recipe Controller to perform CRUD operations
  *
  * @author Akhtar
  */
 @RestController
-@RequestMapping(value = "/abn/kitchen/foodRecipe", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/abn/kitchen/foodRecipe", produces = APPLICATION_JSON_VALUE)
 public class FoodRecipeController {
 
     private final FoodRecipeServiceImpl foodRecipeService;
@@ -48,7 +55,13 @@ public class FoodRecipeController {
      * @param foodRecipe new food recipe to be saved
      * @return saved food recipe
      */
-    @PostMapping
+    @Operation(summary = "Save new food recipe in inventory")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "201", description = "Recipe Saved",
+            content = { @Content(mediaType = "application/json",
+                schema = @Schema(implementation = FoodRecipe.class)) })
+    })
+    @PostMapping(consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(CREATED)
     public FoodRecipe postFoodRecipe(@RequestBody FoodRecipe foodRecipe) {
 
@@ -62,9 +75,16 @@ public class FoodRecipeController {
      * @param foodRecipe food recipe to be updated in inventory
      * @return updated food recipe from inventory
      */
-    @PutMapping(value = "/{id}")
+    @Operation(summary = "Update existing food recipe in inventory")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Recipe updated",
+            content = { @Content(mediaType = "application/json",
+                schema = @Schema(implementation = FoodRecipe.class)) })
+    })
+    @PutMapping(value = "/{id}", consumes = APPLICATION_JSON_VALUE)
     @ResponseStatus(OK)
-    public FoodRecipe putFoodRecipe(@PathVariable Long id, @RequestBody FoodRecipe foodRecipe) {
+    public FoodRecipe putFoodRecipe(@Parameter(description = "id of recipe ot be saved", required = true) @PathVariable Long id,
+                                    @RequestBody FoodRecipe foodRecipe) {
 
         return foodRecipeService.updateFoodRecipe(foodRecipe, id);
     }
@@ -79,13 +99,27 @@ public class FoodRecipeController {
      * @param instructions       recipes which has instructions from keywords
      * @return all food recipes
      */
+    @Operation(summary = "Get all available food recipes from inventory based on filters")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Recipes retrieved",
+            content = { @Content(mediaType = "application/json",
+                schema = @Schema(implementation = FoodRecipe.class)) })
+    })
     @GetMapping
     @ResponseStatus(OK)
-    public List<FoodRecipe> getFoodRecipes(@RequestParam(required = false) Boolean isVegetarian,
-                                           @RequestParam(required = false) Integer numberOfServings,
-                                           @RequestParam(required = false, defaultValue = "#{T(java.util.Collections).emptyList()}") List<String> includeIngredients,
-                                           @RequestParam(required = false, defaultValue = "#{T(java.util.Collections).emptyList()}") List<String> excludeIngredients,
-                                           @RequestParam(required = false, defaultValue = "#{T(java.util.Collections).emptyList()}") List<String> instructions) {
+    public List<FoodRecipe> getFoodRecipes(@Parameter(description = "To query only vegetarian/vegan recipes")
+                                               @RequestParam(required = false) Boolean isVegetarian,
+                                           @Parameter(description = "To query number of servings recipes can be served")
+                                                @RequestParam(required = false) Integer numberOfServings,
+                                           @Parameter(description = "To query recipes which includes searched ingredients")
+                                               @RequestParam(required = false, defaultValue = "#{T(java.util.Collections).emptyList()}")
+                                               List<String> includeIngredients,
+                                           @Parameter(description = "To query recipes which excludes searched ingredients")
+                                               @RequestParam(required = false, defaultValue = "#{T(java.util.Collections).emptyList()}")
+                                               List<String> excludeIngredients,
+                                           @Parameter(description = "To query keywords which present in recipe instructions")
+                                               @RequestParam(required = false, defaultValue = "#{T(java.util.Collections).emptyList()}")
+                                               List<String> instructions) {
 
         return foodRecipeService.getAllFoodRecipes(isVegetarian, numberOfServings,
             includeIngredients.stream().map(String::toUpperCase).collect(toSet()),
@@ -99,9 +133,15 @@ public class FoodRecipeController {
      * @param id of the food recipe
      * @return food recipe from inventory
      */
+    @Operation(summary = "Get food recipes by id")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Recipe retrieved",
+            content = { @Content(mediaType = "application/json",
+                schema = @Schema(implementation = FoodRecipe.class)) })
+    })
     @GetMapping(value = "/{id}")
     @ResponseStatus(OK)
-    public FoodRecipe getFoodRecipe(@PathVariable Long id) {
+    public FoodRecipe getFoodRecipe(@Parameter(description = "Id of the food recipe to be retrieved") @PathVariable Long id) {
 
         return foodRecipeService.getIndividualFoodRecipe(id);
     }
@@ -111,6 +151,11 @@ public class FoodRecipeController {
      *
      * @param id to be deleted from food recipe inventory
      */
+    @Operation(summary = "Delete food recipe from inventory")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "204", description = "Recipe deleted",
+            content = { @Content(mediaType = "application/json") })
+    })
     @DeleteMapping(value = "/{id}")
     @ResponseStatus(NO_CONTENT)
     public void deleteFoodRecipe(@PathVariable Long id) {

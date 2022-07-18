@@ -14,13 +14,19 @@ import org.springframework.web.bind.annotation.RestController;
 import com.abn.food.recipe.persistance.entity.IngredientReferenceEntity;
 import com.abn.food.recipe.persistance.repository.IngredientReferenceRepository;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
+
 /**
  * Ingredients Reference Controller
  *
  * @author Akhtar
  */
 @RestController
-@RequestMapping(value = "/abn/kitchen/reference/ingredients", produces = APPLICATION_JSON_VALUE, consumes = APPLICATION_JSON_VALUE)
+@RequestMapping(value = "/abn/kitchen/reference/ingredients", produces = APPLICATION_JSON_VALUE)
 public class IngredientsReferenceController {
 
     private final IngredientReferenceRepository referenceRepository;
@@ -39,6 +45,12 @@ public class IngredientsReferenceController {
      *
      * @return all available Ingredients
      */
+    @Operation(summary = "Get all available ingredients to be used for searching on UI")
+    @ApiResponses(value = {
+        @ApiResponse(responseCode = "200", description = "Ingredients list retrieved",
+            content = { @Content(mediaType = "application/json",
+                schema = @Schema(implementation = List.class)) })
+    })
     @GetMapping
     @ResponseStatus(OK)
     public List<String> getAllReferenceIngredients() {

@@ -48,12 +48,11 @@ public class FoodRecipeMapper {
      */
     public FoodRecipe formFoodRecipeModel(FoodRecipeEntity recipeEntity) {
         FoodRecipe foodRecipe = new FoodRecipe();
-        foodRecipe.setId(recipeEntity.getId());
         foodRecipe.setDishType(recipeEntity.getDishType());
         foodRecipe.setInstructions(recipeEntity.getInstructions());
         foodRecipe.setServings(recipeEntity.getServings());
         formIngredientsModel(foodRecipe, recipeEntity.getIngredients());
-        updateLink(foodRecipe);
+        updateLink(foodRecipe, recipeEntity.getId());
         return foodRecipe;
     }
 
@@ -121,9 +120,9 @@ public class FoodRecipeMapper {
         return referenceEntity;
     }
 
-    private void updateLink(FoodRecipe foodRecipe) {
+    private void updateLink(FoodRecipe foodRecipe, Long id) {
         Link link = linkTo(methodOn(FoodRecipeController.class)
-            .getFoodRecipe(foodRecipe.getId()))
+            .getFoodRecipe(id))
             .withSelfRel();
         foodRecipe.add(link);
     }

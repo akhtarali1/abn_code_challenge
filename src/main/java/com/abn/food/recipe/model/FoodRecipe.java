@@ -2,22 +2,43 @@ package com.abn.food.recipe.model;
 
 import java.util.List;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import org.springframework.hateoas.RepresentationModel;
 
 import com.abn.food.recipe.enums.DishType;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
  * Food Recipe Rest Model
  *
  * @author AKhtar
  */
+@Schema(description = "Food Recipe with all ingredients and instructions")
 public class FoodRecipe extends RepresentationModel<FoodRecipe> {
 
-    private Long id;
+    @Schema(description = "The Dish Type of recipe")
+    @NotNull
     private DishType dishType;
+
+    @Schema(description = "Number of servings")
+    @NotNull
     private Integer servings;
+
+    @NotNull
+    @Size(min = 1, max = 100)
+    @Schema(description = "List of Ingredients needed for recipe")
     private List<Ingredient> ingredients;
+
+    @Size(min = 1, max = 100)
+    @Schema(description = "List of Ingredients with measurements needed for recipe. Only in GET")
     private List<String> ingredientsWithQuantity;
+
+    @NotNull
+    @Size(max = 2000)
+    @Schema(description = "Detailed Instructions needed to prepare recipe")
     private String instructions;
 
     /**
@@ -29,14 +50,6 @@ public class FoodRecipe extends RepresentationModel<FoodRecipe> {
         return dishType;
     }
 
-    /**
-     * Get Food recipe Id
-     *
-     * @return Food recipe Id
-     */
-    public Long getId() {
-        return id;
-    }
 
     /**
      * Get number of servings
@@ -120,12 +133,4 @@ public class FoodRecipe extends RepresentationModel<FoodRecipe> {
         this.instructions = instructions;
     }
 
-    /**
-     * Set unique Id for each food recipe
-     *
-     * @param id unique Id for food recipe
-     */
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

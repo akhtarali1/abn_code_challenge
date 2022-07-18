@@ -54,7 +54,6 @@ public class FoodRecipeServiceImpl {
      * @return updated food recipe from inventory
      */
     public FoodRecipe updateFoodRecipe(FoodRecipe foodRecipeModel, Long id) {
-        //TODO implement invalid Id update
         return foodRecipeRepository.findById(id)
             .map(entity -> persistAndGetFoodRecipe(foodRecipeModel, id, entity))
             .orElse(null);
@@ -67,7 +66,6 @@ public class FoodRecipeServiceImpl {
      * @return food recipe from inventory
      */
     public FoodRecipe getIndividualFoodRecipe(Long id) {
-        //TODO implement invalid Query
         return foodRecipeRepository.findById(id)
             .map(foodRecipeMapper::formFoodRecipeModel)
             .orElse(null);
@@ -79,7 +77,6 @@ public class FoodRecipeServiceImpl {
      * @param id to be deleted from food recipe inventory
      */
     public void removeFoodRecipe(Long id) {
-        //TODO implement invalid Id deletion
         foodRecipeRepository.deleteById(id);
     }
 

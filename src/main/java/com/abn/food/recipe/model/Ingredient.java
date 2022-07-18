@@ -1,14 +1,29 @@
 package com.abn.food.recipe.model;
 
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+
 /**
  * Ingredient Model
  *
  * @author Akhtar
  */
+@Schema(description = "Each ingredient with Quantity and unit specification")
 public class Ingredient {
 
+    @NotNull
+    @Size(min = 1, max = 200)
+    @Schema(description = "Ingredient name")
     private String name;
+
+    @NotNull
+    @Schema(description = "Quantity if ingredient required")
     private Integer quantity;
+
+    @Size(max = 20)
+    @Schema(description = "unit measurement of Quantity")
     private String unit;
 
     /**
