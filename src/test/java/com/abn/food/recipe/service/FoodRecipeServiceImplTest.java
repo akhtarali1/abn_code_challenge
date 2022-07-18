@@ -4,7 +4,7 @@ import static com.abn.food.recipe.enums.DishType.NON_VEGETARIAN;
 import static com.abn.food.recipe.enums.DishType.VEGAN;
 import static com.abn.food.recipe.enums.DishType.VEGETARIAN;
 import static java.util.Collections.emptySet;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -15,11 +15,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.MockitoJUnitRunner;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.abn.food.recipe.enums.DishType;
 import com.abn.food.recipe.mapper.FoodRecipeMapper;
@@ -29,8 +29,8 @@ import com.abn.food.recipe.persistance.entity.IngredientEntity;
 import com.abn.food.recipe.persistance.entity.IngredientReferenceEntity;
 import com.abn.food.recipe.persistance.repository.FoodRecipeRepository;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FoodRecipeServiceImplTest {
+@ExtendWith(MockitoExtension.class)
+class FoodRecipeServiceImplTest {
 
     @Mock private FoodRecipeMapper foodRecipeMapper;
     @Mock private FoodRecipeRepository foodRecipeRepository;
@@ -38,7 +38,7 @@ public class FoodRecipeServiceImplTest {
     @InjectMocks private FoodRecipeServiceImpl foodRecipeService;
 
     @Test
-    public void saveFoodRecipe() {
+    void saveFoodRecipe() {
         FoodRecipe foodRecipeModel = getFoodRecipe();
         FoodRecipeEntity entity = new FoodRecipeEntity();
         when(foodRecipeRepository.save(any())).thenReturn(entity);
@@ -51,7 +51,7 @@ public class FoodRecipeServiceImplTest {
     }
 
     @Test
-    public void updateFoodRecipe() {
+    void updateFoodRecipe() {
         FoodRecipe foodRecipeModel = getFoodRecipe();
         FoodRecipeEntity entity = new FoodRecipeEntity();
 
@@ -66,7 +66,7 @@ public class FoodRecipeServiceImplTest {
     }
 
     @Test
-    public void getIndividualFoodRecipe() {
+    void getIndividualFoodRecipe() {
         FoodRecipe foodRecipeModel = getFoodRecipe();
         FoodRecipeEntity entity = new FoodRecipeEntity();
         when(foodRecipeRepository.findById(1L)).thenReturn(Optional.of(entity));
@@ -78,13 +78,13 @@ public class FoodRecipeServiceImplTest {
     }
 
     @Test
-    public void removeFoodRecipe() {
+    void removeFoodRecipe() {
         foodRecipeService.removeFoodRecipe(1L);
         verify(foodRecipeRepository).deleteById(1L);
     }
 
     @Test
-    public void getAllFoodRecipes() {
+    void getAllFoodRecipes() {
         when(foodRecipeRepository.findAll()).thenReturn(getFoodRecipeEntities());
         when(foodRecipeMapper.formFoodRecipeModel(any())).thenCallRealMethod();
         List<FoodRecipe> recipes = foodRecipeService.getAllFoodRecipes(null, null, emptySet(), emptySet(), emptySet());
@@ -99,7 +99,7 @@ public class FoodRecipeServiceImplTest {
     }
 
     @Test
-    public void getAllFoodRecipesWithVegetarian() {
+    void getAllFoodRecipesWithVegetarian() {
         when(foodRecipeRepository.findAll()).thenReturn(getFoodRecipeEntities());
         when(foodRecipeMapper.formFoodRecipeModel(any())).thenCallRealMethod();
         List<FoodRecipe> recipes = foodRecipeService.getAllFoodRecipes(true, null, emptySet(), emptySet(), emptySet());
@@ -114,7 +114,7 @@ public class FoodRecipeServiceImplTest {
     }
 
     @Test
-    public void getAllFoodRecipesWithIncludeAndExcludeIngredients() {
+    void getAllFoodRecipesWithIncludeAndExcludeIngredients() {
         when(foodRecipeRepository.findAll()).thenReturn(getFoodRecipeEntities());
         List<FoodRecipe> recipes = foodRecipeService.getAllFoodRecipes(true, null, Set.of("MILK"), Set.of("SUGAR"), emptySet());
 
@@ -122,7 +122,7 @@ public class FoodRecipeServiceImplTest {
     }
 
     @Test
-    public void getAllFoodRecipesWithExcludeIngredientsNotMatching() {
+    void getAllFoodRecipesWithExcludeIngredientsNotMatching() {
         when(foodRecipeRepository.findAll()).thenReturn(getFoodRecipeEntities());
         when(foodRecipeMapper.formFoodRecipeModel(any())).thenCallRealMethod();
         List<FoodRecipe> recipes = foodRecipeService.getAllFoodRecipes(true, 3, Set.of("MILK"), Set.of("SALT"), emptySet());
@@ -137,7 +137,7 @@ public class FoodRecipeServiceImplTest {
     }
 
     @Test
-    public void getAllFoodRecipesBySearchingInstructionsKeywords() {
+    void getAllFoodRecipesBySearchingInstructionsKeywords() {
         when(foodRecipeRepository.findAll()).thenReturn(getFoodRecipeEntities());
         when(foodRecipeMapper.formFoodRecipeModel(any())).thenCallRealMethod();
         List<FoodRecipe> recipes = foodRecipeService.getAllFoodRecipes(true, null, emptySet(), emptySet(), Set.of("OVEN"));

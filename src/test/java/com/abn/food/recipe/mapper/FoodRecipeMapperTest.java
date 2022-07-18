@@ -1,37 +1,38 @@
 package com.abn.food.recipe.mapper;
 
-import static org.junit.Assert.*;
+import static com.abn.food.recipe.enums.DishType.VEGAN;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.Optional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.when;
-import static org.mockito.Mockito.verify;
-import org.mockito.junit.MockitoJUnitRunner;
-
-import static com.abn.food.recipe.enums.DishType.VEGAN;
 import com.abn.food.recipe.model.FoodRecipe;
 import com.abn.food.recipe.model.Ingredient;
 import com.abn.food.recipe.persistance.entity.FoodRecipeEntity;
 import com.abn.food.recipe.persistance.entity.IngredientReferenceEntity;
 import com.abn.food.recipe.persistance.repository.IngredientReferenceRepository;
 
-@RunWith(MockitoJUnitRunner.class)
-public class FoodRecipeMapperTest {
+@ExtendWith(MockitoExtension.class)
+class FoodRecipeMapperTest {
 
     @Mock private IngredientReferenceRepository referenceRepository;
 
     @InjectMocks private FoodRecipeMapper foodRecipeMapper;
 
     @Test
-    public void formFoodRecipeEntity() {
+    void formFoodRecipeEntity() {
         IngredientReferenceEntity referenceEntity = new IngredientReferenceEntity();
         referenceEntity.setName("egg");
         when(referenceRepository.findByNameEqualsIgnoreCase("egg")).thenReturn(Optional.of(referenceEntity));
@@ -60,7 +61,7 @@ public class FoodRecipeMapperTest {
     }
 
     @Test
-    public void formFoodRecipeEntityWithIngredientReferenceNotFound() {
+    void formFoodRecipeEntityWithIngredientReferenceNotFound() {
         when(referenceRepository.findByNameEqualsIgnoreCase("egg")).thenReturn(Optional.empty());
         when(referenceRepository.save(any())).thenReturn(new IngredientReferenceEntity());
 

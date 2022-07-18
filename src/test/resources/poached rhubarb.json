@@ -1,0 +1,27 @@
+{
+  "dishType": "VEGAN",
+  "servings": 12,
+  "ingredients": [
+    {
+      "name": "rhubarb",
+      "quantity": 2,
+      "unit": "kg"
+    },
+    {
+      "name": "ginger",
+      "quantity": 5,
+      "unit": "cm"
+    },
+    {
+      "name": "sugar",
+      "quantity": 300,
+      "unit": "gm"
+    },
+    {
+      "name": "fresh thyme",
+      "quantity": 1,
+      "unit": "bunch"
+    }
+  ],
+  "instructions": "Mix Sliced rhubarb, ginger, suger, thyme in big deep fry pan. Boil on medium heat for 12min untill soft & syrup. Serve hot"
+}

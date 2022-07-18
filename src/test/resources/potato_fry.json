@@ -1,0 +1,27 @@
+{
+  "dishType": "VEGETARIAN",
+  "servings": 5,
+  "ingredients": [
+    {
+      "name": "potato",
+      "quantity": 400,
+      "unit": "gm"
+    },
+    {
+      "name": "mustard",
+      "quantity": 10,
+      "unit": "gm"
+    },
+    {
+      "name": "chilli powder",
+      "quantity": 20,
+      "unit": "gm"
+    },
+    {
+      "name": "oil",
+      "quantity": 100,
+      "unit": "ml"
+    }
+  ],
+  "instructions": "Mix Potato, Onion, oil, mustard and chilli powder. Keep in oven for 20min under 175 degres celcius"
+}

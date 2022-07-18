@@ -45,7 +45,7 @@
             <column name="QUANTITY" type="NUMBER(4)">
                 <constraints nullable="false"/>
             </column>
-            <column name="UNIT" type="VARCHAR2(5)" />
+            <column name="UNIT" type="VARCHAR2(20)" />
             <column name="REFERENCE_ID" type="NUMBER(19)">
                 <constraints foreignKeyName="FK_REFERENCE_ID" nullable="false"
                              referencedColumnNames="ID" referencedTableName="INGREDIENT_REFERENCE"/>

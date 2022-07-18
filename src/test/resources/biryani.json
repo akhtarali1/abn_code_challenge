@@ -1,0 +1,27 @@
+{
+  "dishType": "NON_VEGETARIAN",
+  "servings": 3,
+  "ingredients": [
+    {
+      "name": "onion",
+      "quantity": 100,
+      "unit": "gm"
+    },
+    {
+      "name": "rice",
+      "quantity": 500,
+      "unit": "gm"
+    },
+    {
+      "name": "chicken",
+      "quantity": 500,
+      "unit": "gm"
+    },
+    {
+      "name": "oil",
+      "quantity": 100,
+      "unit": "ml"
+    }
+  ],
+  "instructions": "On Stove Fry chicken & Onion in oil. Then Add rice and water. Mix well and cook for 20mins on low flame"
+}
