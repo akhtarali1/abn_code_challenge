@@ -56,7 +56,7 @@ public class FoodRecipeServiceImpl {
     public FoodRecipe updateFoodRecipe(FoodRecipe foodRecipeModel, Long id) {
         return foodRecipeRepository.findById(id)
             .map(entity -> persistAndGetFoodRecipe(foodRecipeModel, id, entity))
-            .orElse(null);
+            .orElseThrow(() -> new IdNotFoundException(id));
     }
 
     /**
@@ -67,8 +67,8 @@ public class FoodRecipeServiceImpl {
      */
     public FoodRecipe getIndividualFoodRecipe(Long id) {
         return foodRecipeRepository.findById(id)
-            .map(foodRecipeMapper::formFoodRecipeModel)
-            .orElse(null);
+            .map(recipeEntity -> foodRecipeMapper.formFoodRecipeModel(recipeEntity, true))
+            .orElseThrow(() -> new IdNotFoundException(id));
     }
 
     /**
@@ -99,7 +99,7 @@ public class FoodRecipeServiceImpl {
             .filter(entity -> includeIngredients.isEmpty() || entity.getAllIngredientNamesInUpperCase().containsAll(includeIngredients))
             .filter(entity -> excludeIngredients.isEmpty() || checkExcludedIngredientsDoesntExist(entity.getAllIngredientNamesInUpperCase(), excludeIngredients))
             .filter(entity -> instructionKeyWords.isEmpty() || instructionKeyWords.stream().allMatch(entity.getInstructions().toUpperCase()::contains))
-            .map(foodRecipeMapper::formFoodRecipeModel)
+            .map(entity -> foodRecipeMapper.formFoodRecipeModel(entity, false))
             .collect(toList());
     }
 
@@ -115,7 +115,7 @@ public class FoodRecipeServiceImpl {
     private FoodRecipe persistAndGetFoodRecipe(FoodRecipe foodRecipeModel, Long id, FoodRecipeEntity recipeEntity) {
         foodRecipeMapper.formFoodRecipeEntity(foodRecipeModel, recipeEntity, id);
         FoodRecipeEntity savedEntity = foodRecipeRepository.save(recipeEntity);
-        return foodRecipeMapper.formFoodRecipeModel(savedEntity);
+        return foodRecipeMapper.formFoodRecipeModel(savedEntity, true);
     }
 
 }

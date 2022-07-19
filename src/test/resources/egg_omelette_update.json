@@ -1,0 +1,16 @@
+{
+  "dishType": "NON_VEGETARIAN",
+  "servings": 2,
+  "ingredients": [
+    {
+      "name": "eggs",
+      "quantity": 2
+    },
+    {
+      "name": "oil",
+      "quantity": 10,
+      "unit": "gm"
+    }
+  ],
+  "instructions": "Beat in oven for 2mins & eat. Don't ask me how to cook"
+}

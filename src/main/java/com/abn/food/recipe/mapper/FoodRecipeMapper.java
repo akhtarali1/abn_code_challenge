@@ -1,11 +1,17 @@
 package com.abn.food.recipe.mapper;
 
+import static java.util.Collections.emptyList;
+import static java.util.Optional.ofNullable;
 import static java.util.stream.Collectors.toList;
+import static java.util.stream.Collectors.toMap;
+import static liquibase.repackaged.org.apache.commons.collections4.CollectionUtils.isNotEmpty;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.linkTo;
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.methodOn;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.hateoas.Link;
@@ -43,15 +49,15 @@ public class FoodRecipeMapper {
     /**
      * Map Food recipe model from entity
      *
-     * @param recipeEntity DB entity of Food recipe
+     * @param recipeEntity           DB entity of Food recipe
+     * @param isAdditionalDataRequired skip instructions mapping if false
      * @return mapped food recipe model
      */
-    public FoodRecipe formFoodRecipeModel(FoodRecipeEntity recipeEntity) {
+    public FoodRecipe formFoodRecipeModel(FoodRecipeEntity recipeEntity, boolean isAdditionalDataRequired) {
         FoodRecipe foodRecipe = new FoodRecipe();
         foodRecipe.setDishType(recipeEntity.getDishType());
-        foodRecipe.setInstructions(recipeEntity.getInstructions());
         foodRecipe.setServings(recipeEntity.getServings());
-        formIngredientsModel(foodRecipe, recipeEntity.getIngredients());
+        formIngredientsModel(foodRecipe, recipeEntity, isAdditionalDataRequired);
         updateLink(foodRecipe, recipeEntity.getId());
         return foodRecipe;
     }
@@ -68,13 +74,14 @@ public class FoodRecipeMapper {
         entity.setDishType(recipe.getDishType());
         entity.setInstructions(recipe.getInstructions());
         entity.setServings(recipe.getServings());
-        entity.setIngredients(formIngredientsEntityFromModel(recipe.getIngredients(), entity));
+        List<IngredientEntity> ingredientEntities = formIngredientsEntityFromModel(recipe.getIngredients(), entity);
+        entity.getIngredients().addAll(ingredientEntities);
     }
 
-    private void formIngredientsModel(FoodRecipe foodRecipe, List<IngredientEntity> ingredientEntities) {
+    private void formIngredientsModel(FoodRecipe foodRecipe, FoodRecipeEntity recipeEntity, boolean isAdditionalDataRequired) {
         List<Ingredient> ingredients = new ArrayList<>();
         List<String> ingredientsWithQuantity = new ArrayList<>();
-        ingredientEntities.forEach(entity -> {
+        recipeEntity.getIngredients().forEach(entity -> {
             String ingredientName = entity.getReferenceEntity().getName();
             Ingredient ingredient = new Ingredient();
             ingredient.setName(ingredientName);
@@ -93,20 +100,34 @@ public class FoodRecipeMapper {
         });
 
         foodRecipe.setIngredientsWithQuantity(ingredientsWithQuantity);
-        foodRecipe.setIngredients(ingredients);
+        if (isAdditionalDataRequired) {
+            foodRecipe.setIngredients(ingredients);
+            foodRecipe.setInstructions(recipeEntity.getInstructions());
+        }
     }
 
     private List<IngredientEntity> formIngredientsEntityFromModel(List<Ingredient> ingredientNames, FoodRecipeEntity foodRecipeEntity) {
+        // TO collect existing Ingredients in DB to update them.
+        Map<String, IngredientEntity> existingIngredientEntityMap = ofNullable(foodRecipeEntity.getIngredients())
+            .orElse(emptyList())
+            .stream().collect(toMap(entity -> entity.getReferenceEntity().getName(), Function.identity()));
+        //If Food recipe entity already exists in DB then ingredients should be cleared from persistence cache as we are overriding all
+        if (isNotEmpty(foodRecipeEntity.getIngredients())) {
+            foodRecipeEntity.getIngredients().clear();
+        } else {
+            foodRecipeEntity.setIngredients(new ArrayList<>());
+        }
+
         return ingredientNames.stream()
-            .map(ingredient -> formIngredientEntity(ingredient, foodRecipeEntity))
+            .map(ingredient -> formIngredientEntity(ingredient, foodRecipeEntity, existingIngredientEntityMap.get(ingredient.getName())))
             .collect(toList());
     }
 
-    private IngredientEntity formIngredientEntity(Ingredient ingredient, FoodRecipeEntity foodRecipeEntity) {
+    private IngredientEntity formIngredientEntity(Ingredient ingredient, FoodRecipeEntity foodRecipeEntity, IngredientEntity ingredientEntity) {
         IngredientReferenceEntity referenceEntity = ingredientReferenceRepository.findByNameEqualsIgnoreCase(ingredient.getName())
             .orElseGet(() -> ingredientReferenceRepository.save(formIngredientReferenceEntity(ingredient.getName())));
 
-        IngredientEntity entity = new IngredientEntity();
+        IngredientEntity entity = ofNullable(ingredientEntity).orElseGet(IngredientEntity::new);
         entity.setQuantity(ingredient.getQuantity());
         entity.setUnit(ingredient.getUnit());
         entity.setReferenceEntity(referenceEntity);

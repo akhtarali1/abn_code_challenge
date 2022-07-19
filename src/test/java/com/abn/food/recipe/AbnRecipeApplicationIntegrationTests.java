@@ -7,6 +7,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -67,7 +68,7 @@ class AbnRecipeApplicationIntegrationTests {
             .andExpect(status().isCreated())
             .andExpect(jsonPath("$.servings").value(3))
             .andExpect(jsonPath("$.dishType").value(NON_VEGETARIAN.name()))
-            .andExpect(jsonPath("$.instructions").hasJsonPath())
+            .andExpect(jsonPath("$.instructions").value("On Stove Fry chicken & Onion in oil. Then Add rice and water. Mix well and cook for 20mins on low flame"))
             .andExpect(jsonPath("$.ingredients").isArray());
 
         mvc.perform(get(REFERENCE_URL)
@@ -81,8 +82,8 @@ class AbnRecipeApplicationIntegrationTests {
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.[1].servings").value(3))
             .andExpect(jsonPath("$.[0].dishType").value(NON_VEGETARIAN.name()))
-            .andExpect(jsonPath("$.[1].instructions").value("On Stove Fry chicken & Onion in oil. Then Add rice and water. Mix well and cook for 20mins on low flame"))
-            .andExpect(jsonPath("$.[1].ingredients.[3].name").value("oil"));
+            .andExpect(jsonPath("$.[1].instructions").doesNotHaveJsonPath())
+            .andExpect(jsonPath("$.[1].ingredients").doesNotHaveJsonPath());
     }
 
     @Test
@@ -110,7 +111,7 @@ class AbnRecipeApplicationIntegrationTests {
             .andExpect(jsonPath("$.[2]").doesNotHaveJsonPath())
             .andExpect(jsonPath("$.[1].servings").value(5))
             .andExpect(jsonPath("$.[1].dishType").value(VEGETARIAN.name()))
-            .andExpect(jsonPath("$.[1].instructions").isString())
+            .andExpect(jsonPath("$.[1].instructions").doesNotHaveJsonPath())
             .andExpect(jsonPath("$.[1].ingredientsWithQuantity.[2]").value("chilli powder 20gm"));
     }
 
@@ -139,7 +140,7 @@ class AbnRecipeApplicationIntegrationTests {
             .andExpect(jsonPath("$.[2]").doesNotHaveJsonPath())
             .andExpect(jsonPath("$.[1].servings").value(12))
             .andExpect(jsonPath("$.[1].dishType").value(VEGAN.name()))
-            .andExpect(jsonPath("$.[1].instructions").isString())
+            .andExpect(jsonPath("$.[1].instructions").doesNotHaveJsonPath())
             .andExpect(jsonPath("$.[1].ingredientsWithQuantity.[3]").value("fresh thyme 1bunch"));
     }
 
@@ -154,7 +155,7 @@ class AbnRecipeApplicationIntegrationTests {
             .andExpect(jsonPath("$.[1]").doesNotHaveJsonPath())
             .andExpect(jsonPath("$.[0].servings").value(12))
             .andExpect(jsonPath("$.[0].dishType").value(VEGAN.name()))
-            .andExpect(jsonPath("$.[0].instructions").isString())
+            .andExpect(jsonPath("$.[0].instructions").doesNotHaveJsonPath())
             .andExpect(jsonPath("$.[0].ingredientsWithQuantity.[2]").value("sugar 300gm"));
     }
 
@@ -176,6 +177,31 @@ class AbnRecipeApplicationIntegrationTests {
                 .param("includeIngredients", "rice"))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$").isEmpty());
+    }
+
+    @Test
+    @Order(7)
+    void putFirstFoodRecipe() throws Exception {
+        mvc.perform(put(URL + "/1")
+                .contentType(APPLICATION_JSON)
+                .content(convertJsonToStringFromFile("egg_omelette_update.json")))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.servings").value(2))
+            .andExpect(jsonPath("$.dishType").value(NON_VEGETARIAN.name()))
+            .andExpect(jsonPath("$.instructions").hasJsonPath())
+            .andExpect(jsonPath("$.ingredients.[2]").doesNotHaveJsonPath());
+
+        mvc.perform(get(REFERENCE_URL)
+                .contentType(APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.[0]").value("onion"));
+
+        mvc.perform(get(URL + "/1"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.servings").value(2))
+            .andExpect(jsonPath("$.dishType").value(NON_VEGETARIAN.name()))
+            .andExpect(jsonPath("$.instructions").hasJsonPath())
+            .andExpect(jsonPath("$.ingredients").isArray());
     }
 
     private String convertJsonToStringFromFile(String fileName) {

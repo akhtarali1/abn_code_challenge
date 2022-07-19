@@ -8,6 +8,7 @@ import javax.validation.constraints.Size;
 import org.springframework.hateoas.RepresentationModel;
 
 import com.abn.food.recipe.enums.DishType;
+import com.fasterxml.jackson.annotation.JsonInclude;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -30,6 +31,7 @@ public class FoodRecipe extends RepresentationModel<FoodRecipe> {
     @NotNull
     @Size(min = 1, max = 100)
     @Schema(description = "List of Ingredients needed for recipe")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private List<Ingredient> ingredients;
 
     @Size(min = 1, max = 100)
@@ -39,6 +41,7 @@ public class FoodRecipe extends RepresentationModel<FoodRecipe> {
     @NotNull
     @Size(max = 2000)
     @Schema(description = "Detailed Instructions needed to prepare recipe")
+    @JsonInclude(JsonInclude.Include.NON_NULL)
     private String instructions;
 
     /**

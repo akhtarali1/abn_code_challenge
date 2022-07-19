@@ -5,6 +5,7 @@ import static com.abn.food.recipe.enums.DishType.VEGAN;
 import static com.abn.food.recipe.enums.DishType.VEGETARIAN;
 import static java.util.Collections.emptySet;
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
@@ -42,7 +43,7 @@ class FoodRecipeServiceImplTest {
         FoodRecipe foodRecipeModel = getFoodRecipe();
         FoodRecipeEntity entity = new FoodRecipeEntity();
         when(foodRecipeRepository.save(any())).thenReturn(entity);
-        when(foodRecipeMapper.formFoodRecipeModel(entity)).thenReturn(foodRecipeModel);
+        when(foodRecipeMapper.formFoodRecipeModel(entity, true)).thenReturn(foodRecipeModel);
 
         FoodRecipe savedFoodRecipe = foodRecipeService.saveFoodRecipe(foodRecipeModel);
         verify(foodRecipeMapper).formFoodRecipeEntity(eq(savedFoodRecipe), any(), eq(null));
@@ -57,7 +58,7 @@ class FoodRecipeServiceImplTest {
 
         when(foodRecipeRepository.findById(1L)).thenReturn(Optional.of(entity));
         when(foodRecipeRepository.save(any())).thenReturn(entity);
-        when(foodRecipeMapper.formFoodRecipeModel(entity)).thenReturn(foodRecipeModel);
+        when(foodRecipeMapper.formFoodRecipeModel(entity, true)).thenReturn(foodRecipeModel);
 
         FoodRecipe updatedFoodRecipe = foodRecipeService.updateFoodRecipe(foodRecipeModel, 1L);
         verify(foodRecipeMapper).formFoodRecipeEntity(updatedFoodRecipe, entity, 1L);
@@ -70,7 +71,7 @@ class FoodRecipeServiceImplTest {
         FoodRecipe foodRecipeModel = getFoodRecipe();
         FoodRecipeEntity entity = new FoodRecipeEntity();
         when(foodRecipeRepository.findById(1L)).thenReturn(Optional.of(entity));
-        when(foodRecipeMapper.formFoodRecipeModel(entity)).thenReturn(foodRecipeModel);
+        when(foodRecipeMapper.formFoodRecipeModel(entity, true)).thenReturn(foodRecipeModel);
 
         FoodRecipe foodRecipe = foodRecipeService.getIndividualFoodRecipe(1L);
         assertEquals(VEGAN, foodRecipe.getDishType());
@@ -86,29 +87,28 @@ class FoodRecipeServiceImplTest {
     @Test
     void getAllFoodRecipes() {
         when(foodRecipeRepository.findAll()).thenReturn(getFoodRecipeEntities());
-        when(foodRecipeMapper.formFoodRecipeModel(any())).thenCallRealMethod();
+        when(foodRecipeMapper.formFoodRecipeModel(any(), eq(false))).thenCallRealMethod();
         List<FoodRecipe> recipes = foodRecipeService.getAllFoodRecipes(null, null, emptySet(), emptySet(), emptySet());
 
         assertEquals(3, recipes.size());
         assertEquals(NON_VEGETARIAN, recipes.get(0).getDishType());
         assertEquals(Integer.valueOf(4), recipes.get(0).getServings());
-        assertEquals(Integer.valueOf(500), recipes.get(1).getIngredients().get(1).getQuantity());
-        assertEquals("gm", recipes.get(1).getIngredients().get(2).getUnit());
+        assertNull(recipes.get(1).getIngredients());
         assertEquals("2 eggs", recipes.get(1).getIngredientsWithQuantity().get(0));
         assertEquals("milk 500ml", recipes.get(0).getIngredientsWithQuantity().get(1));
+        assertNull(recipes.get(0).getInstructions());
     }
 
     @Test
     void getAllFoodRecipesWithVegetarian() {
         when(foodRecipeRepository.findAll()).thenReturn(getFoodRecipeEntities());
-        when(foodRecipeMapper.formFoodRecipeModel(any())).thenCallRealMethod();
+        when(foodRecipeMapper.formFoodRecipeModel(any(), eq(false))).thenCallRealMethod();
         List<FoodRecipe> recipes = foodRecipeService.getAllFoodRecipes(true, null, emptySet(), emptySet(), emptySet());
 
         assertEquals(2, recipes.size());
         assertEquals(VEGETARIAN, recipes.get(0).getDishType());
         assertEquals(Integer.valueOf(2), recipes.get(0).getServings());
-        assertEquals(Integer.valueOf(500), recipes.get(0).getIngredients().get(1).getQuantity());
-        assertEquals("gm", recipes.get(1).getIngredients().get(2).getUnit());
+        assertNull(recipes.get(0).getIngredients());
         assertEquals("2 eggs", recipes.get(1).getIngredientsWithQuantity().get(0));
         assertEquals("milk 500ml", recipes.get(0).getIngredientsWithQuantity().get(1));
     }
@@ -124,14 +124,13 @@ class FoodRecipeServiceImplTest {
     @Test
     void getAllFoodRecipesWithExcludeIngredientsNotMatching() {
         when(foodRecipeRepository.findAll()).thenReturn(getFoodRecipeEntities());
-        when(foodRecipeMapper.formFoodRecipeModel(any())).thenCallRealMethod();
+        when(foodRecipeMapper.formFoodRecipeModel(any(), eq(false))).thenCallRealMethod();
         List<FoodRecipe> recipes = foodRecipeService.getAllFoodRecipes(true, 3, Set.of("MILK"), Set.of("SALT"), emptySet());
 
         assertEquals(1, recipes.size());
         assertEquals(VEGAN, recipes.get(0).getDishType());
         assertEquals(Integer.valueOf(3), recipes.get(0).getServings());
-        assertEquals(Integer.valueOf(500), recipes.get(0).getIngredients().get(1).getQuantity());
-        assertEquals("gm", recipes.get(0).getIngredients().get(2).getUnit());
+        assertNull(recipes.get(0).getIngredients());
         assertEquals("2 eggs", recipes.get(0).getIngredientsWithQuantity().get(0));
         assertEquals("milk 500ml", recipes.get(0).getIngredientsWithQuantity().get(1));
     }
@@ -139,14 +138,13 @@ class FoodRecipeServiceImplTest {
     @Test
     void getAllFoodRecipesBySearchingInstructionsKeywords() {
         when(foodRecipeRepository.findAll()).thenReturn(getFoodRecipeEntities());
-        when(foodRecipeMapper.formFoodRecipeModel(any())).thenCallRealMethod();
+        when(foodRecipeMapper.formFoodRecipeModel(any(), eq(false))).thenCallRealMethod();
         List<FoodRecipe> recipes = foodRecipeService.getAllFoodRecipes(true, null, emptySet(), emptySet(), Set.of("OVEN"));
 
         assertEquals(1, recipes.size());
         assertEquals(VEGETARIAN, recipes.get(0).getDishType());
         assertEquals(Integer.valueOf(2), recipes.get(0).getServings());
-        assertEquals(Integer.valueOf(500), recipes.get(0).getIngredients().get(1).getQuantity());
-        assertEquals("gm", recipes.get(0).getIngredients().get(2).getUnit());
+        assertNull(recipes.get(0).getIngredients());
         assertEquals("2 eggs", recipes.get(0).getIngredientsWithQuantity().get(0));
         assertEquals("milk 500ml", recipes.get(0).getIngredientsWithQuantity().get(1));
     }

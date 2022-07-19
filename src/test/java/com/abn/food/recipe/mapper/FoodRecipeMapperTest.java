@@ -49,7 +49,7 @@ class FoodRecipeMapperTest {
         assertNull(recipeEntity.getIngredients().get(0).getUnit());
 
         //TO Test formFoodRecipeModel from derived entity
-        FoodRecipe foodRecipeModel = foodRecipeMapper.formFoodRecipeModel(recipeEntity);
+        FoodRecipe foodRecipeModel = foodRecipeMapper.formFoodRecipeModel(recipeEntity, true);
         assertEquals(VEGAN, foodRecipeModel.getDishType());
         assertEquals(Integer.valueOf(4), foodRecipeModel.getServings());
         assertEquals("Cook me on Stove", foodRecipeModel.getInstructions());
