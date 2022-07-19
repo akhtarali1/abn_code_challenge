@@ -8,6 +8,8 @@ import static org.springframework.http.HttpStatus.NOT_FOUND;
 import static org.springframework.http.HttpStatus.UNSUPPORTED_MEDIA_TYPE;
 
 import org.hibernate.exception.ConstraintViolationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
@@ -35,6 +37,8 @@ import com.abn.food.recipe.service.IdNotFoundException;
 @RestControllerAdvice
 public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
 
+    Logger LOG = LoggerFactory.getLogger(ExceptionHandlerController.class);
+
     private static final String ERROR_CODE = "1000";
     private static final String TECHNICAL_ERROR_CODE = "2000";
 
@@ -46,6 +50,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler({IdNotFoundException.class})
     public ResponseEntity<Object> handleIdNotFoundExceptions(IdNotFoundException exception) {
+        LOG.error("Id not found", exception);
         String message = "Requested Id: " + exception.getId() + " is not found. Please Check";
         return formErrorResponse(message, ERROR_CODE, BAD_REQUEST);
     }
@@ -58,6 +63,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler({MethodArgumentTypeMismatchException.class})
     public ResponseEntity<Object> handleMethodArgumentTypeMismatch(MethodArgumentTypeMismatchException exception) {
+        LOG.error("Method ArgumentType Mismatch Exception", exception);
         String message = exception.getName() + " should be of type " + exception.getRequiredType().getName();
         return formErrorResponse(message, ERROR_CODE, BAD_REQUEST);
     }
@@ -70,6 +76,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler({DataIntegrityViolationException.class})
     public ResponseEntity<Object> handleDataIntegrityViolationException(DataIntegrityViolationException exception) {
+        LOG.error("Data Integrity Violation Exception", exception);
         String errorMessage = getErrorMessageFromException(exception);
         return formErrorResponse(errorMessage, ERROR_CODE, BAD_REQUEST);
     }
@@ -82,7 +89,7 @@ public class ExceptionHandlerController extends ResponseEntityExceptionHandler {
      */
     @ExceptionHandler(value = {Exception.class})
     public ResponseEntity<Object> handleExceptions(Exception exception) {
-        String message = "Unexpected technical error occurred";
+        LOG.error("Unhandled technical exception", exception);
         return formErrorResponse("Unexpected technical error occurred", TECHNICAL_ERROR_CODE, INTERNAL_SERVER_ERROR);
     }
 
