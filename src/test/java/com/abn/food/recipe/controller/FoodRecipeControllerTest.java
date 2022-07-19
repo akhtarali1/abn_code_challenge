@@ -129,7 +129,6 @@ class FoodRecipeControllerTest {
 
     private FoodRecipe foodRecipe() {
         FoodRecipe foodRecipe = new FoodRecipe();
-        foodRecipe.setId(1L);
         foodRecipe.setServings(4);
         foodRecipe.setDishType(NON_VEGETARIAN);
         foodRecipe.setInstructions("Cook Yourself");
