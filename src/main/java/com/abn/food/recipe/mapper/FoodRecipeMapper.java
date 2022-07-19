@@ -55,6 +55,7 @@ public class FoodRecipeMapper {
      */
     public FoodRecipe formFoodRecipeModel(FoodRecipeEntity recipeEntity, boolean isAdditionalDataRequired) {
         FoodRecipe foodRecipe = new FoodRecipe();
+        foodRecipe.setRecipeName(recipeEntity.getRecipeName());
         foodRecipe.setDishType(recipeEntity.getDishType());
         foodRecipe.setServings(recipeEntity.getServings());
         formIngredientsModel(foodRecipe, recipeEntity, isAdditionalDataRequired);
@@ -71,6 +72,7 @@ public class FoodRecipeMapper {
      */
     public void formFoodRecipeEntity(FoodRecipe recipe, FoodRecipeEntity entity, Long id) {
         entity.setId(id);
+        entity.setRecipeName(recipe.getRecipeName());
         entity.setDishType(recipe.getDishType());
         entity.setInstructions(recipe.getInstructions());
         entity.setServings(recipe.getServings());

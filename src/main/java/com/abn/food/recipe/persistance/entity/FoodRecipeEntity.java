@@ -32,6 +32,7 @@ public class FoodRecipeEntity {
     @GeneratedValue(strategy = IDENTITY)
     private Long id;
 
+    private String recipeName;
     @Enumerated(STRING)
     private DishType dishType;
 
@@ -87,6 +88,12 @@ public class FoodRecipeEntity {
     }
 
     /**
+     * Get recipe name
+     * @return recipe name
+     */
+    public String getRecipeName() { return recipeName; }
+
+    /**
      * Set dish type of food
      *
      * @param dishType dish type of food
@@ -130,6 +137,12 @@ public class FoodRecipeEntity {
     public void setId(Long id) {
         this.id = id;
     }
+
+    /**
+     * Set recipe name
+     * @param recipeName recipe name
+     */
+    public void setRecipeName(String recipeName) { this.recipeName = recipeName; }
 
     public Set<String> getAllIngredientNamesInUpperCase() {
         return ingredients.stream()

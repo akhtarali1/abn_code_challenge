@@ -48,6 +48,7 @@ class AbnRecipeApplicationIntegrationTests {
                 .contentType(APPLICATION_JSON)
                 .content(convertJsonToStringFromFile("egg_omelette.json")))
             .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.recipeName").value("Egg Omelette"))
             .andExpect(jsonPath("$.servings").value(2))
             .andExpect(jsonPath("$.dishType").value(NON_VEGETARIAN.name()))
             .andExpect(jsonPath("$.instructions").hasJsonPath())

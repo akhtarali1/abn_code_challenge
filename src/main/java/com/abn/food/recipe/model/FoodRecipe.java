@@ -20,6 +20,11 @@ import io.swagger.v3.oas.annotations.media.Schema;
 @Schema(description = "Food Recipe with all ingredients and instructions")
 public class FoodRecipe extends RepresentationModel<FoodRecipe> {
 
+    @Schema(description = "Name of recipe")
+    @NotNull
+    @Size(min = 1, max = 200)
+    private String recipeName;
+
     @Schema(description = "The Dish Type of recipe")
     @NotNull
     private DishType dishType;
@@ -88,6 +93,24 @@ public class FoodRecipe extends RepresentationModel<FoodRecipe> {
      */
     public String getInstructions() {
         return instructions;
+    }
+
+    /**
+     * Get recipe name
+     *
+     * @return recipe name
+     */
+    public String getRecipeName() {
+        return recipeName;
+    }
+
+    /**
+     * Set recipe name
+     *
+     * @param recipeName recipe name
+     */
+    public void setRecipeName(String recipeName) {
+        this.recipeName = recipeName;
     }
 
     /**

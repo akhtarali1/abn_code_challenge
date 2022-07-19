@@ -41,6 +41,7 @@ class FoodRecipeMapperTest {
         foodRecipeMapper.formFoodRecipeEntity(getFoodRecipe(), recipeEntity, 1L);
         verify(referenceRepository, times(0)).save(any());
 
+        assertEquals("Egg fry", recipeEntity.getRecipeName());
         assertEquals(VEGAN, recipeEntity.getDishType());
         assertEquals(Integer.valueOf(4), recipeEntity.getServings());
         assertEquals("Cook me on Stove", recipeEntity.getInstructions());
@@ -50,6 +51,7 @@ class FoodRecipeMapperTest {
 
         //TO Test formFoodRecipeModel from derived entity
         FoodRecipe foodRecipeModel = foodRecipeMapper.formFoodRecipeModel(recipeEntity, true);
+        assertEquals("Egg fry", foodRecipeModel.getRecipeName());
         assertEquals(VEGAN, foodRecipeModel.getDishType());
         assertEquals(Integer.valueOf(4), foodRecipeModel.getServings());
         assertEquals("Cook me on Stove", foodRecipeModel.getInstructions());
@@ -57,7 +59,6 @@ class FoodRecipeMapperTest {
         assertEquals("egg", foodRecipeModel.getIngredients().get(0).getName());
         assertNull(foodRecipeModel.getIngredients().get(0).getUnit());
         assertEquals("2 egg", foodRecipeModel.getIngredientsWithQuantity().get(0));
-
     }
 
     @Test
@@ -80,6 +81,7 @@ class FoodRecipeMapperTest {
 
     private FoodRecipe getFoodRecipe() {
         FoodRecipe foodRecipe = new FoodRecipe();
+        foodRecipe.setRecipeName("Egg fry");
         foodRecipe.setServings(4);
         foodRecipe.setDishType(VEGAN);
         foodRecipe.setInstructions("Cook me on Stove");

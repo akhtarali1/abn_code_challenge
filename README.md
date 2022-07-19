@@ -38,3 +38,4 @@ Swagger Json schema can be accessed via [JSON](http://localhost:8080/v3/api-docs
 * The performance of the application is also considered by guaranteeing response time at O(n) - response time in milliseconds.
 * Code Quality & coding conventions are followed.
 * In /GET all call, instruction & ingredient fields mapping has been skipped considering UI loading time as content might have images or long text.
+* Git commit messages conventions have been followed

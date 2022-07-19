@@ -23,6 +23,9 @@
             <column name="ID" type="NUMBER(19)" defaultValueSequenceNext="FOOD_RECIPE_ID_SEQ">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
+            <column name="RECIPE_NAME" type="VARCHAR2(200)">
+                <constraints nullable="false"/>
+            </column>
             <column name="DISH_TYPE" type="VARCHAR2(200)">
                 <constraints nullable="false"/>
             </column>
